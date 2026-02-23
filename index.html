@@ -37,15 +37,14 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 48px 24px;
+    padding: 32px 16px 48px;
   }
 
-  /* Subtle grid texture on body */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: 
+    background-image:
       linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
     background-size: 40px 40px;
@@ -65,7 +64,6 @@
     border: 1px solid var(--border-strong);
   }
 
-  /* Gold top accent line */
   .ledger::before {
     content: '';
     position: absolute;
@@ -75,45 +73,47 @@
     z-index: 2;
   }
 
+  /* ── HEADER ── */
   header {
-    padding: 32px 36px 28px;
+    padding: 24px 24px 20px;
     background: var(--card-header);
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .header-icon {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     background: var(--gold-dim);
     border: 1px solid rgba(226,185,110,0.3);
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     flex-shrink: 0;
   }
 
   header h1 {
     font-family: 'Syne', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--text);
     letter-spacing: -0.3px;
   }
 
   header p {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -130,25 +130,27 @@
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     white-space: nowrap;
+    min-height: 36px;
   }
-  .btn-reset:hover {
-    background: rgba(242,108,108,0.2);
+  .btn-reset:hover, .btn-reset:active {
+    background: rgba(242,108,108,0.22);
     border-color: rgba(242,108,108,0.5);
-    transform: translateY(-1px);
   }
 
-  /* Add row form */
-  .add-row {
-    display: grid;
-    grid-template-columns: 160px 1fr 140px 52px;
-    gap: 0;
+  /* ── ADD FORM ── */
+  .add-section {
     border-bottom: 1px solid var(--border);
     background: var(--add-bg);
+  }
+
+  .add-row {
+    display: grid;
+    grid-template-columns: 155px 1fr 130px 52px;
   }
 
   .add-row input {
@@ -157,17 +159,16 @@
     background: none;
     border: none;
     border-right: 1px solid var(--border);
-    padding: 15px 16px;
+    padding: 14px;
     color: var(--text);
     outline: none;
     width: 100%;
     transition: background 0.15s;
+    min-height: 52px;
   }
-  .add-row input:last-of-type { border-right: none; }
   .add-row input::placeholder { color: var(--text-muted); }
   .add-row input:focus { background: var(--gold-glow); }
 
-  /* Colorize date input icon in webkit */
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.5) sepia(1) saturate(2) hue-rotate(5deg);
     opacity: 0.5;
@@ -178,24 +179,29 @@
     background: var(--gold);
     border: none;
     color: #0d1b2a;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s;
+    min-height: 52px;
   }
-  .btn-add:hover {
-    background: #f0cc88;
-    transform: scale(1.05);
+  .btn-add:hover { background: #f0cc88; }
+  .btn-add:active { transform: scale(0.95); }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Table */
   table {
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed;
+    min-width: 400px;
   }
 
   thead tr {
@@ -204,18 +210,17 @@
   }
 
   th {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-muted);
-    padding: 11px 16px;
+    padding: 10px 14px;
     text-align: left;
     font-weight: 600;
   }
-
-  th:first-child { padding-left: 36px; width: 180px; }
-  th:last-child { width: 50px; text-align: center; }
-  th.amount { text-align: right; width: 160px; }
+  th:first-child { width: 115px; }
+  th:last-child  { width: 46px; text-align: center; }
+  th.amount      { text-align: right; width: 130px; }
 
   tbody tr {
     border-bottom: 1px solid var(--border);
@@ -225,39 +230,34 @@
   tbody tr:hover { background: var(--hover); }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
+    from { opacity: 0; transform: translateY(-5px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
   td {
-    font-size: 0.83rem;
-    padding: 13px 16px;
+    font-size: 0.82rem;
+    padding: 12px 14px;
     color: var(--text);
     vertical-align: middle;
-    font-weight: 400;
+    word-break: break-word;
   }
-  td:first-child { padding-left: 36px; }
 
   .date-cell {
     color: var(--text-muted);
-    font-size: 0.78rem;
-    font-weight: 400;
+    font-size: 0.75rem;
+    white-space: nowrap;
   }
 
-  td.amount {
-    text-align: right;
-    font-weight: 600;
-    font-size: 0.85rem;
-  }
+  td.amount { text-align: right; }
 
   .amount-pill {
     display: inline-flex;
     align-items: center;
-    padding: 3px 10px;
+    padding: 3px 9px;
     border-radius: 20px;
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
+    white-space: nowrap;
   }
   .amount-pill.positive { background: var(--positive-bg); color: var(--positive); }
   .amount-pill.negative { background: var(--negative-bg); color: var(--negative); }
@@ -268,16 +268,20 @@
     background: none;
     border: 1px solid transparent;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     cursor: pointer;
-    padding: 5px 9px;
+    padding: 6px 8px;
     border-radius: 6px;
     transition: all 0.15s;
-    line-height: 1;
-    opacity: 0.4;
+    opacity: 0.35;
+    min-width: 32px;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   tbody tr:hover .btn-delete { opacity: 1; }
-  .btn-delete:hover {
+  .btn-delete:hover, .btn-delete:active {
     color: var(--negative);
     background: var(--negative-bg);
     border-color: rgba(242,108,108,0.3);
@@ -288,24 +292,19 @@
     text-align: center;
     color: var(--text-muted);
     font-size: 0.78rem;
-    letter-spacing: 0.05em;
-    padding: 48px;
+    padding: 44px 16px;
     font-style: italic;
     opacity: 0.6;
   }
 
-  /* Total row */
+  /* ── TOTAL ── */
   tfoot tr {
     border-top: 1px solid var(--border-strong);
     background: var(--card-header);
   }
-  tfoot td {
-    padding: 16px 16px;
-    font-size: 0.83rem;
-  }
+  tfoot td { padding: 14px 14px; font-size: 0.82rem; }
   tfoot td:first-child {
-    padding-left: 36px;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-muted);
@@ -314,22 +313,67 @@
   tfoot td.total-amount {
     text-align: right;
     font-weight: 700;
-    font-size: 1.05rem;
-    padding-right: 16px;
+    font-size: 1rem;
   }
   tfoot td.total-amount.positive { color: var(--positive); }
   tfoot td.total-amount.negative { color: var(--negative); }
-  tfoot td.total-amount.zero { color: var(--gold); }
+  tfoot td.total-amount.zero     { color: var(--gold); }
 
-  /* Row number */
   .row-num {
     display: inline-block;
-    width: 20px;
-    font-size: 0.6rem;
+    width: 18px;
+    font-size: 0.58rem;
     color: var(--text-muted);
-    opacity: 0.4;
-    margin-right: 4px;
+    opacity: 0.35;
+    margin-right: 3px;
     text-align: right;
+  }
+
+  /* ════════════════════════════════
+     TABLET  ≤ 640px
+  ════════════════════════════════ */
+  @media (max-width: 640px) {
+    body { padding: 16px 12px 48px; }
+
+    .ledger { border-radius: 12px; }
+
+    /* Stacked form: row 1 = date | amount, row 2 = item | add-btn */
+    .add-row {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .add-row #inp-date   { grid-column: 1; grid-row: 1; border-bottom: 1px solid var(--border); }
+    .add-row #inp-amount { grid-column: 2; grid-row: 1; border-right: none; border-bottom: 1px solid var(--border); }
+    .add-row #inp-item   { grid-column: 1; grid-row: 2; border-right: 1px solid var(--border); }
+    .add-row .btn-add    { grid-column: 2; grid-row: 2; }
+
+    .add-row input { padding: 12px; font-size: 0.88rem; min-height: 50px; }
+  }
+
+  /* ════════════════════════════════
+     MOBILE  ≤ 420px
+  ════════════════════════════════ */
+  @media (max-width: 420px) {
+    body { padding: 0 0 40px; }
+
+    .ledger { border-radius: 0; border-left: none; border-right: none; }
+
+    header { padding: 16px; }
+    header h1 { font-size: 1.1rem; }
+    header p  { display: none; }
+
+    table { min-width: 0; table-layout: auto; }
+    th, td { padding: 10px 10px; font-size: 0.76rem; }
+    th:first-child { width: auto; }
+    th.amount { width: 95px; }
+    th:last-child { width: 38px; }
+
+    .amount-pill { padding: 2px 7px; font-size: 0.68rem; }
+    .date-cell   { font-size: 0.68rem; }
+    .row-num     { display: none; }
+
+    tfoot td { padding: 12px 10px; }
+    tfoot td.total-amount { font-size: 0.9rem; }
   }
 </style>
 </head>
@@ -347,75 +391,77 @@
     <button class="btn-reset" onclick="resetAll()">↺ Reset All</button>
   </header>
 
-  <div class="add-row">
-    <input type="date" id="inp-date">
-    <input type="text" id="inp-item" placeholder="Item description…">
-    <input type="number" id="inp-amount" placeholder="Amount" step="0.01">
-    <button class="btn-add" onclick="addRow()" title="Add row">+</button>
+  <div class="add-section">
+    <div class="add-row">
+      <input type="date"   id="inp-date">
+      <input type="text"   id="inp-item"   placeholder="Item description…" autocomplete="off">
+      <input type="number" id="inp-amount" placeholder="Amount" step="0.01" inputmode="decimal">
+      <button class="btn-add" onclick="addRow()" title="Add row">+</button>
+    </div>
   </div>
 
-  <table id="ledger-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Item</th>
-        <th class="amount">Amount</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      <tr class="empty-row" id="empty-msg">
-        <td colspan="4">No entries yet — add one above</td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td>Total</td>
-        <td></td>
-        <td class="total-amount zero" id="total">0.00</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Item</th>
+          <th class="amount">Amount</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr class="empty-row">
+          <td colspan="4">No entries yet — add one above</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td></td>
+          <td class="total-amount zero" id="total">0.00</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
 <script>
   let rows = [];
 
-  // Set today's date as default
   document.getElementById('inp-date').valueAsDate = new Date();
 
-  // Allow Enter key to add row
-  document.getElementById('inp-amount').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addRow();
-  });
+  // Enter key navigation
+  document.getElementById('inp-date').addEventListener('keydown',   e => { if (e.key === 'Enter') document.getElementById('inp-item').focus(); });
+  document.getElementById('inp-item').addEventListener('keydown',   e => { if (e.key === 'Enter') document.getElementById('inp-amount').focus(); });
+  document.getElementById('inp-amount').addEventListener('keydown', e => { if (e.key === 'Enter') addRow(); });
 
   function addRow() {
-    const date = document.getElementById('inp-date').value;
-    const item = document.getElementById('inp-item').value.trim();
+    const date      = document.getElementById('inp-date').value;
+    const item      = document.getElementById('inp-item').value.trim();
     const amountStr = document.getElementById('inp-amount').value;
 
     if (!date || !item || amountStr === '') {
-      highlight('inp-date', !date);
-      highlight('inp-item', !item);
-      highlight('inp-amount', amountStr === '');
+      flash('inp-date',   !date);
+      flash('inp-item',   !item);
+      flash('inp-amount', amountStr === '');
       return;
     }
 
     rows.push({ id: Date.now(), date, item, amount: parseFloat(amountStr) });
-    document.getElementById('inp-item').value = '';
+    document.getElementById('inp-item').value   = '';
     document.getElementById('inp-amount').value = '';
     document.getElementById('inp-date').valueAsDate = new Date();
     render();
     document.getElementById('inp-item').focus();
   }
 
-  function highlight(id, condition) {
-    if (condition) {
-      const el = document.getElementById(id);
-      el.style.background = 'rgba(242,108,108,0.12)';
-      setTimeout(() => el.style.background = '', 600);
-    }
+  function flash(id, condition) {
+    if (!condition) return;
+    const el = document.getElementById(id);
+    el.style.background = 'rgba(242,108,108,0.14)';
+    setTimeout(() => el.style.background = '', 700);
   }
 
   function deleteRow(id) {
@@ -424,11 +470,8 @@
   }
 
   function resetAll() {
-    if (rows.length === 0) return;
-    if (confirm('Reset all entries?')) {
-      rows = [];
-      render();
-    }
+    if (!rows.length) return;
+    if (confirm('Reset all entries?')) { rows = []; render(); }
   }
 
   function formatDate(d) {
@@ -443,20 +486,17 @@
 
   function render() {
     const tbody = document.getElementById('tbody');
-    const emptyMsg = document.getElementById('empty-msg');
-
-    // Clear existing data rows (keep empty-msg template)
     tbody.innerHTML = '';
 
-    if (rows.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row" id="empty-msg"><td colspan="4">No entries yet — add one above</td></tr>';
+    if (!rows.length) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No entries yet — add one above</td></tr>';
     } else {
       rows.forEach((r, i) => {
         const cls = r.amount >= 0 ? 'positive' : 'negative';
-        const tr = document.createElement('tr');
+        const tr  = document.createElement('tr');
         tr.innerHTML = `
-          <td class="date-cell"><span class="row-num">${i + 1}</span>${formatDate(r.date)}</td>
-          <td>${escHtml(r.item)}</td>
+          <td class="date-cell"><span class="row-num">${i+1}</span>${formatDate(r.date)}</td>
+          <td>${esc(r.item)}</td>
           <td class="amount"><span class="amount-pill ${cls}">${formatAmount(r.amount)}</span></td>
           <td class="delete"><button class="btn-delete" title="Delete" onclick="deleteRow(${r.id})">✕</button></td>
         `;
@@ -464,14 +504,13 @@
       });
     }
 
-    // Update total
-    const total = rows.reduce((s, r) => s + r.amount, 0);
+    const total   = rows.reduce((s, r) => s + r.amount, 0);
     const totalEl = document.getElementById('total');
     totalEl.textContent = (total >= 0 ? '+' : '') + total.toFixed(2);
-    totalEl.className = 'total-amount ' + (total > 0 ? 'positive' : total < 0 ? 'negative' : 'zero');
+    totalEl.className   = 'total-amount ' + (total > 0 ? 'positive' : total < 0 ? 'negative' : 'zero');
   }
 
-  function escHtml(s) {
+  function esc(s) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 </script>
