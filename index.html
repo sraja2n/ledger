@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-from: #0d1b2a;
+    --bg-to: #1b2a3b;
+    --card: #162032;
+    --card-header: #0f1e2e;
+    --border: rgba(255,255,255,0.07);
+    --border-strong: rgba(255,255,255,0.14);
+    --gold: #e2b96e;
+    --gold-dim: rgba(226,185,110,0.15);
+    --gold-glow: rgba(226,185,110,0.08);
+    --text: #e8edf2;
+    --text-muted: #6b849d;
+    --positive: #3dd68c;
+    --positive-bg: rgba(61,214,140,0.1);
+    --negative: #f26c6c;
+    --negative-bg: rgba(242,108,108,0.1);
+    --hover: rgba(226,185,110,0.05);
+    --add-bg: rgba(255,255,255,0.03);
+    --shadow: 0 24px 64px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.3);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-to) 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+
+  /* Subtle grid texture on body */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .ledger {
+    background: var(--card);
+    width: 100%;
+    max-width: 780px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    border: 1px solid var(--border-strong);
+  }
+
+  /* Gold top accent line */
+  .ledger::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+    z-index: 2;
+  }
+
+  header {
+    padding: 32px 36px 28px;
+    background: var(--card-header);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(226,185,110,0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  header p {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .btn-reset {
+    background: rgba(242,108,108,0.1);
+    border: 1px solid rgba(242,108,108,0.25);
+    color: var(--negative);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-reset:hover {
+    background: rgba(242,108,108,0.2);
+    border-color: rgba(242,108,108,0.5);
+    transform: translateY(-1px);
+  }
+
+  /* Add row form */
+  .add-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 140px 52px;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--add-bg);
+  }
+
+  .add-row input {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    background: none;
+    border: none;
+    border-right: 1px solid var(--border);
+    padding: 15px 16px;
+    color: var(--text);
+    outline: none;
+    width: 100%;
+    transition: background 0.15s;
+  }
+  .add-row input:last-of-type { border-right: none; }
+  .add-row input::placeholder { color: var(--text-muted); }
+  .add-row input:focus { background: var(--gold-glow); }
+
+  /* Colorize date input icon in webkit */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.5) sepia(1) saturate(2) hue-rotate(5deg);
+    opacity: 0.5;
+    cursor: pointer;
+  }
+
+  .btn-add {
+    background: var(--gold);
+    border: none;
+    color: #0d1b2a;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .btn-add:hover {
+    background: #f0cc88;
+    transform: scale(1.05);
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--border-strong);
+    background: rgba(255,255,255,0.02);
+  }
+
+  th {
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  th:first-child { padding-left: 36px; width: 180px; }
+  th:last-child { width: 50px; text-align: center; }
+  th.amount { text-align: right; width: 160px; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+    animation: fadeIn 0.22s ease;
+  }
+  tbody tr:hover { background: var(--hover); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  td {
+    font-size: 0.83rem;
+    padding: 13px 16px;
+    color: var(--text);
+    vertical-align: middle;
+    font-weight: 400;
+  }
+  td:first-child { padding-left: 36px; }
+
+  .date-cell {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 400;
+  }
+
+  td.amount {
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  .amount-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .amount-pill.positive { background: var(--positive-bg); color: var(--positive); }
+  .amount-pill.negative { background: var(--negative-bg); color: var(--negative); }
+
+  td.delete { text-align: center; }
+
+  .btn-delete {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 5px 9px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    line-height: 1;
+    opacity: 0.4;
+  }
+  tbody tr:hover .btn-delete { opacity: 1; }
+  .btn-delete:hover {
+    color: var(--negative);
+    background: var(--negative-bg);
+    border-color: rgba(242,108,108,0.3);
+    opacity: 1;
+  }
+
+  .empty-row td {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    padding: 48px;
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  /* Total row */
+  tfoot tr {
+    border-top: 1px solid var(--border-strong);
+    background: var(--card-header);
+  }
+  tfoot td {
+    padding: 16px 16px;
+    font-size: 0.83rem;
+  }
+  tfoot td:first-child {
+    padding-left: 36px;
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  tfoot td.total-amount {
+    text-align: right;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding-right: 16px;
+  }
+  tfoot td.total-amount.positive { color: var(--positive); }
+  tfoot td.total-amount.negative { color: var(--negative); }
+  tfoot td.total-amount.zero { color: var(--gold); }
+
+  /* Row number */
+  .row-num {
+    display: inline-block;
+    width: 20px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    opacity: 0.4;
+    margin-right: 4px;
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div class="ledger">
+  <header>
+    <div class="header-left">
+      <div class="header-icon">📒</div>
+      <div>
+        <h1>Ledger</h1>
+        <p>Track your entries</p>
+      </div>
+    </div>
+    <button class="btn-reset" onclick="resetAll()">↺ Reset All</button>
+  </header>
+
+  <div class="add-row">
+    <input type="date" id="inp-date">
+    <input type="text" id="inp-item" placeholder="Item description…">
+    <input type="number" id="inp-amount" placeholder="Amount" step="0.01">
+    <button class="btn-add" onclick="addRow()" title="Add row">+</button>
+  </div>
+
+  <table id="ledger-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Item</th>
+        <th class="amount">Amount</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr class="empty-row" id="empty-msg">
+        <td colspan="4">No entries yet — add one above</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>Total</td>
+        <td></td>
+        <td class="total-amount zero" id="total">0.00</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<script>
+  let rows = [];
+
+  // Set today's date as default
+  document.getElementById('inp-date').valueAsDate = new Date();
+
+  // Allow Enter key to add row
+  document.getElementById('inp-amount').addEventListener('keydown', e => {
+    if (e.key === 'Enter') addRow();
+  });
+
+  function addRow() {
+    const date = document.getElementById('inp-date').value;
+    const item = document.getElementById('inp-item').value.trim();
+    const amountStr = document.getElementById('inp-amount').value;
+
+    if (!date || !item || amountStr === '') {
+      highlight('inp-date', !date);
+      highlight('inp-item', !item);
+      highlight('inp-amount', amountStr === '');
+      return;
+    }
+
+    rows.push({ id: Date.now(), date, item, amount: parseFloat(amountStr) });
+    document.getElementById('inp-item').value = '';
+    document.getElementById('inp-amount').value = '';
+    document.getElementById('inp-date').valueAsDate = new Date();
+    render();
+    document.getElementById('inp-item').focus();
+  }
+
+  function highlight(id, condition) {
+    if (condition) {
+      const el = document.getElementById(id);
+      el.style.background = 'rgba(242,108,108,0.12)';
+      setTimeout(() => el.style.background = '', 600);
+    }
+  }
+
+  function deleteRow(id) {
+    rows = rows.filter(r => r.id !== id);
+    render();
+  }
+
+  function resetAll() {
+    if (rows.length === 0) return;
+    if (confirm('Reset all entries?')) {
+      rows = [];
+      render();
+    }
+  }
+
+  function formatDate(d) {
+    if (!d) return '';
+    const [y, m, day] = d.split('-');
+    return `${day}/${m}/${y}`;
+  }
+
+  function formatAmount(n) {
+    return (n >= 0 ? '+' : '') + n.toFixed(2);
+  }
+
+  function render() {
+    const tbody = document.getElementById('tbody');
+    const emptyMsg = document.getElementById('empty-msg');
+
+    // Clear existing data rows (keep empty-msg template)
+    tbody.innerHTML = '';
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row" id="empty-msg"><td colspan="4">No entries yet — add one above</td></tr>';
+    } else {
+      rows.forEach((r, i) => {
+        const cls = r.amount >= 0 ? 'positive' : 'negative';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="date-cell"><span class="row-num">${i + 1}</span>${formatDate(r.date)}</td>
+          <td>${escHtml(r.item)}</td>
+          <td class="amount"><span class="amount-pill ${cls}">${formatAmount(r.amount)}</span></td>
+          <td class="delete"><button class="btn-delete" title="Delete" onclick="deleteRow(${r.id})">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Update total
+    const total = rows.reduce((s, r) => s + r.amount, 0);
+    const totalEl = document.getElementById('total');
+    totalEl.textContent = (total >= 0 ? '+' : '') + total.toFixed(2);
+    totalEl.className = 'total-amount ' + (total > 0 ? 'positive' : total < 0 ? 'negative' : 'zero');
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>
